@@ -1,0 +1,6 @@
+Flask
+firebase-admin
+openai
+yfinance
+python-dotenv
+selenium
