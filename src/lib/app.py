@@ -17,7 +17,7 @@ load_dotenv()
 
 app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app, default_limits=["300 per day", "10 per minute"])
-CORS(app)
+CORS(app, origins=["https://tweetsniper.vercel.app"], supports_credentials=True)
 
 if not firebase_admin._apps:
     cred = credentials.Certificate("serviceAccountKey.json")
@@ -142,6 +142,12 @@ from flask_cors import cross_origin
 @limiter.limit("10 per minute") 
 @cross_origin()
 def analyze():
+    if request.method == "OPTIONS":
+        response = app.make_default_options_response()
+        response.headers["Access-Control-Allow-Origin"] = "https://tweetsniper.vercel.app"
+        response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type"
+        response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        return response
     # 🔒 Authenticate user using Firebase ID token
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
@@ -236,4 +242,4 @@ def analyze():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5274)), debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5004)), debug=True)
