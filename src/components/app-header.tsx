@@ -34,7 +34,7 @@ export function AppHeader() {
     localStorage.removeItem("username");
     localStorage.removeItem("email");
     toast.success("Logged out successfully");
-    navigate("/"); // or "/auth" if you want a specific login page
+    navigate("/"); 
   } catch (err: any) {
     console.error("Logout error:", err);
     toast.error("Failed to log out");

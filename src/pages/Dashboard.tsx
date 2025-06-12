@@ -19,7 +19,7 @@ import {
 import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import {toast} from "sonner";
+import { toast } from "sonner";
 
 type Creator = {
   username: string;
@@ -153,7 +153,12 @@ export default function Dashboard() {
   return (
     <div className="px-4 md:px-10 py-20 space-y-10">
       <div className="flex flex-col items-center justify-center space-y-6">
-        <h1 className="text-8xl md:text-8xl font-extrabold tracking-tight">
+        <h1
+          className="text-8xl md:text-8xl font-extrabold tracking-tight 
+  bg-gradient-to-t from-gray-600 to-white 
+  dark:from-gray-600  dark:to-white
+  bg-clip-text text-transparent"
+        >
           Snipr
         </h1>
         <p className="mt-4 md:px-6 text-sm md:text-md text-muted-foreground max-w-xl">
