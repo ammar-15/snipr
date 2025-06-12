@@ -96,7 +96,7 @@ export default function Dashboard() {
       }
 
       const idToken = await user.getIdToken();
-      const res = await fetch("http://127.0.0.1:5274/analyze", {
+      const res = await fetch("http://127.0.0.1:10000/analyze", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
