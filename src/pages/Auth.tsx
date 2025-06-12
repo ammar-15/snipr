@@ -20,10 +20,11 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 export default function Auth() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("test123@gmail.com");
+  const [password, setPassword] = useState("test1234");
   const [isSignup, setIsSignup] = useState(false);
   const navigate = useNavigate();
+  
 
   const handleAuth = async () => {
     isSignup ? trackSignup() : trackLogin();
