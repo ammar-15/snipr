@@ -28,7 +28,7 @@ export default function YourSnipes() {
   const fetchUsername = async () => {
     const user = auth.currentUser;
     if (!user) return;
-     const snapshot = await getDocs(collection(db, "users", user.uid, "profile")); 
+     const snapshot = await getDocs(collection(db, "users")); 
 
     if (!snapshot.empty) {
       const docData = snapshot.docs[0].data();
@@ -40,14 +40,15 @@ export default function YourSnipes() {
 }, []);
 
   useEffect(() => {
-    const fetchSnipes = async () => {
-      const snapshot = await getDocs(collection(db, `${username}snipe`));
-      const data = snapshot.docs.map((doc) => doc.data() as Snipe);
-      setSnipes(data);
-    };
+  const fetchSnipes = async () => {
+    if (!username) return; 
+    const snapshot = await getDocs(collection(db, `${username}snipe`));
+    const data = snapshot.docs.map((doc) => doc.data() as Snipe);
+    setSnipes(data);
+  };
 
-    fetchSnipes();
-  }, []);
+  fetchSnipes();
+}, [username]);
 
   const toggleRow = (username: string) => {
     setExpandedRows((prev) => ({

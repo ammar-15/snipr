@@ -1,6 +1,4 @@
 import {
-    CircleAlert,
-    Gauge,
     LucideIcon
 } from 'lucide-react'
 
@@ -17,11 +15,9 @@ export const mainMenu: MenuType = [
     {
         title: 'Dashboard',
         url: '/dashboard',
-        icon: Gauge
     },
     {
         title: 'Your Snipes',
         url: '/yoursnipes',
-        icon: CircleAlert,
     },
 ]

@@ -152,7 +152,7 @@ export default function Dashboard() {
   return (
     <div className="px-4 md:px-10 py-20 space-y-10">
       <div className="flex flex-col items-center justify-center space-y-6">
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
+        <h1 className="text-8xl md:text-8xl font-extrabold tracking-tight">
           Snipr
         </h1>
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
@@ -205,7 +205,9 @@ export default function Dashboard() {
                       {personalResult.username}
                     </a>
                   </TableCell>
-                  <TableCell>{personalResult.tickers}</TableCell>
+                  <div className="max-w-[85px] sm:max-w-none overflow-x-auto whitespace-nowrap">
+                    <TableCell>{personalResult.tickers}</TableCell>
+                  </div>
                   <TableCell>{personalResult.score}</TableCell>
                 </TableRow>
                 {personalResult.breakdown && (
