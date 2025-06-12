@@ -155,7 +155,16 @@ export default function Dashboard() {
         <h1 className="text-8xl md:text-8xl font-extrabold tracking-tight">
           Snipr
         </h1>
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+        <p className="mt-4 md:px-6 text-sm md:text-md text-muted-foreground max-w-xl">
+          Paste the Twitter profile link of someone who shares stock opinions.
+          We'll analyze their recent posts and see if their calls on tickers
+          were actually accurate.
+          <br />
+          <span className="text-xs text-gray-400">
+            Example: https://x.com/username
+          </span>
+        </p>{" "}
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
           <Input
             placeholder="Paste Twitter profile URL..."
             value={searchUrl}
