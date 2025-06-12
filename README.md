@@ -1,73 +1,64 @@
-# React Shadcn Starter
+# Snipr 🔍📈
 
-React + Vite + TypeScript template for building apps with shadcn/ui.
+[https://tweetsniper.vercel.app](tweetsniper.vercel.app)
 
-## Getting Started
+Snipr is a stock call tracker for Twitter traders. Given a Twitter profile URL, the app analyzes recent tweets to identify bullish or bearish calls on stocks. It then evaluates the accuracy of those calls based on current performance of those stocks and assigns a **reliability score** to each creator.
 
-```bash
-npx degit hayyi2/react-shadcn-starter my-project
-cd my-project
-npm install
-npm run dev
-```
+## 🧠 What It Does
 
-## Getting Done
+- Takes a Twitter profile link as input
+- Analyzes tweet history for bullish/bearish calls using OpenAI
+- Cross-checks those calls against real stock market data
+- Assigns a **reliability score** based on call accuracy
+- Displays a leaderboard of top stock trading influencers
 
-- [x] Single page app with navigation and responsif layout
-- [x] Customable configuration `/config`
-- [x] Simple starting page/feature `/pages`
-- [x] Github action deploy github pages
+## 🛠️ Tech Stack
 
-## Deploy `gh-pages`
-
-- change `basenameProd` in `/vite.config.ts`
-- create deploy key `GITHUB_TOKEN` in github `/settings/keys`
-- commit and push changes code
-- setup gihub pages to branch `gh-pages`
-- run action `Build & Deploy`
-
-### Auto Deploy
-
-- change file `.github/workflows/build-and-deploy.yml`
-- Comment on `workflow_dispatch`
-- Uncomment on `push`
-
-```yaml
-# on:
-#   workflow_dispatch:
-on:
-  push:
-    branches: ["main"]
-```
-
-## Features
-
-- React + Vite + TypeScript
+**Frontend:**
+- React
+- TypeScript
 - Tailwind CSS
-- [shadcn-ui](https://github.com/shadcn-ui/ui/)
-- [react-router-dom](https://www.npmjs.com/package/react-router-dom)
+- Shadcn UI
+- Vite
 
-## Project Structure
+**Backend:**
+- Python (Flask)
+- OpenAI API
+- yFinance (Yahoo Finance)
+- Tweepy / SNScrape (for tweet fetching)
 
-```md
-react-shadcn-starter/
-├── public/            # Public assets
-├── src/               # Application source code
-│   ├── components/    # React components
-│   ├── context/       # contexts components
-│   ├── config/        # Config data
-│   ├── hook/          # Custom hooks
-│   ├── lib/           # Utility functions
-│   ├── pages/         # pages/features components
-│   ├── App.tsx        # Application entry point
-│   ├── index.css      # Main css and tailwind configuration
-│   ├── main.tsx       # Main rendering file
-│   └── Router.tsx     # Routes component
-├── index.html         # HTML entry point
-├── tsconfig.json      # TypeScript configuration
-└── vite.config.ts     # Vite configuration
-```
+**Database:**
+- Firebase Firestore
 
-## License
+**Hosting & Build Tools:**
+- Vercel (Frontend)
+- Render (for Python)
+- GitHub (CI/CD)
 
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/hayyi2/react-shadcn-starter/blob/main/LICENSE) file for details.
+## 📚 What I Learned
+
+- Parsing unstructured tweet data using NLP
+- Using OpenAI to extract and classify financial sentiment
+- Building a full-stack app with TypeScript + Python
+- Managing async workflows between frontend, Python scripts, and Firestore
+- Designing with Tailwind + Shadcn for clean UI
+- Fetching live stock data using yFinance
+- Deploying both frontend and backend in a production-ready setup
+
+## ⚙️ How It Works (Flow)
+
+1. **User inputs Twitter URL** on the frontend dashboard
+2. Username is extracted and passed to Flask API
+3. API fetches recent tweets using Tweepy/SNScrape
+4. Each tweet is passed to OpenAI to identify and label stock calls (bullish/bearish/neutral)
+5. API compares tweet date and prediction against historical stock data (via yFinance)
+6. A reliability score is calculated and saved to Firestore
+7. Frontend retrieves and displays top performers on a leaderboard
+
+## 🐞 Bugs
+
+If you encounter any bugs, have suggestions for improvements, or want to share some fun features, please reach out!
+---
+
+Thanks for reading!
+Made by Ammar Faruqui
