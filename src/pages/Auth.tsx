@@ -24,7 +24,6 @@ export default function Auth() {
   const [password, setPassword] = useState("test1234");
   const [isSignup, setIsSignup] = useState(false);
   const navigate = useNavigate();
-  
 
   const handleAuth = async () => {
     isSignup ? trackSignup() : trackLogin();
@@ -93,43 +92,55 @@ export default function Auth() {
   };
 
   return (
-    <div className="flex flex-col items-center max-w-sm mx-auto pt-[50%] md:py-30 space-y-4">
-      <h1
-        className="text-8xl md:text-8xl font-extrabold tracking-tight 
-  bg-gradient-to-t from-gray-600 to-white 
-  dark:from-gray-600  dark:to-white
-  bg-clip-text text-transparent"
-      >
-        Snipr
-      </h1>
-
-      <p className="mt-3 text-sm text-muted-foreground">
-        Every tweet is a claim. <br />
-        Snipr is the reckoning.
-      </p>
-      <Input
-        className="w-58"
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <Input
-        className="w-58"
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <Button onClick={handleAuth}>{isSignup ? "Sign Up" : "Log In"}</Button>
-      <p
-        className="text-center text-sm text-muted-foreground cursor-pointer"
-        onClick={() => setIsSignup(!isSignup)}
-      >
-        {isSignup
-          ? "Already have an account? Log in"
-          : "Don't have an account? Sign up"}
-      </p>
+    <div className="grid min-h-screen lg:grid-cols-[1fr_2.3fr]">
+      <div className="flex flex-col gap-4 p-6 md:p-10">
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-xs">
+            <h1
+              className="text-8xl md:text-8xl font-extrabold tracking-tight 
+              bg-gradient-to-t from-gray-600 to-white dark:from-gray-600 dark:to-white
+              bg-clip-text text-transparent text-center"
+            >
+              Snipr
+            </h1>
+            <p className="mt-3 text-sm text-muted-foreground text-center">
+              Every tweet is a claim. <br /> Snipr is the reckoning.
+            </p>
+            <div className="space-y-4 mt-6">
+              <Input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Button className="w-full" onClick={handleAuth}>
+                {isSignup ? "Sign Up" : "Log In"}
+              </Button>
+              <p
+                className="text-center text-sm text-muted-foreground cursor-pointer"
+                onClick={() => setIsSignup(!isSignup)}
+              >
+                {isSignup
+                  ? "Already have an account? Log in"
+                  : "Don't have an account? Sign up"}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="bg-muted relative hidden lg:block">
+        <img
+          src="/snipr.png"
+          alt="Login Illustration"
+          className="absolute inset-0 h-full w-80% object-cover dark:brightness-[0.8] dark:grayscale"
+        />
+      </div>
     </div>
   );
 }
