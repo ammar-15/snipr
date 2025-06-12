@@ -17,7 +17,7 @@ load_dotenv()
 
 app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app, default_limits=["300 per day", "10 per minute"])
-CORS(app, resources={r"/*": {"origins": "https://tweetsniper.vercel.app"}})
+CORS(app)
 
 if not firebase_admin._apps:
     cred = credentials.Certificate("serviceAccountKey.json")
@@ -236,4 +236,4 @@ def analyze():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)), debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5274)), debug=True)
