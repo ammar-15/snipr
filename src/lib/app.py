@@ -17,7 +17,7 @@ load_dotenv()
 
 app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app, default_limits=["300 per day", "10 per minute"])
-CORS(app, origins=["https://tweetsniper.vercel.app"], supports_credentials=True, methods=["GET", "POST", "OPTIONS"])
+CORS(app, resources={r"/*": {"origins": "https://tweetsniper.vercel.app"}})
 
 if not firebase_admin._apps:
     cred = credentials.Certificate("serviceAccountKey.json")
