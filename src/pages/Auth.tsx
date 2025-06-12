@@ -93,11 +93,13 @@ export default function Auth() {
 
   return (
     <div className="flex flex-col items-center max-w-sm mx-auto pt-[50%] md:py-30 space-y-4">
-      <h1 className="text-8xl md:text-8xl font-extrabold tracking-tight">
+      <h1 className="text-8xl md:text-8xl font-extrabold tracking-tight bg-gradient-to-t from-gray-400 to-white bg-clip-text text-transparent">
         Snipr
       </h1>
+
       <p className="mt-3 text-sm text-muted-foreground">
-        Every tweet is a claim. <br/>Snipr is the reckoning.
+        Every tweet is a claim. <br />
+        Snipr is the reckoning.
       </p>
       <Input
         className="w-58"
