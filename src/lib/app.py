@@ -17,7 +17,7 @@ load_dotenv()
 
 app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app, default_limits=["300 per day", "10 per minute"])
-CORS(app, origins=["https://tweetsniper.vercel.app"])
+CORS(app, origins=["https://tweetsniper.vercel.app"], supports_credentials=True, methods=["GET", "POST", "OPTIONS"])
 
 if not firebase_admin._apps:
     cred = credentials.Certificate("serviceAccountKey.json")
@@ -138,7 +138,7 @@ def fact_check(ticker_calls):
     return correct, len(ticker_calls), breakdown
 
 from flask_cors import cross_origin
-@app.route("/analyze", methods=["POST"])
+@app.route("/analyze", methods=["POST", "OPTIONS"])
 @limiter.limit("10 per minute") 
 @cross_origin()
 def analyze():
@@ -179,6 +179,9 @@ def analyze():
 
     correct, total, breakdown = fact_check(ticker_calls)
     reliability = round((correct / total) * 100) if total else 0
+
+    if request.method == "OPTIONS":
+        return '', 204
 
     if not ticker_calls:
         print("⚠️ No valid ticker calls found in tweets.")

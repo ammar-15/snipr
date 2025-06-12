@@ -96,7 +96,8 @@ export default function Dashboard() {
       }
 
       const idToken = await user.getIdToken();
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/analyze`, {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
+      const res = await fetch(`${baseUrl}/analyze`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
