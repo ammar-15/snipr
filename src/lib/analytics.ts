@@ -1,4 +1,4 @@
-import { analytics } from "@/lib/firebase";
+import { analytics } from "../../firebase";
 import { logEvent } from "firebase/analytics";
 
 export const trackLogin = () => {

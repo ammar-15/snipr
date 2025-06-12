@@ -25,5 +25,5 @@ dist-ssr
 
 .env
 
-src/lib/firebase.ts
+firebase.ts
 serviceAccountKey.json

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { auth, db } from "@/lib/firebase";
+import { auth, db } from "../../firebase";
 import { toast } from "sonner";
 import {
   createUserWithEmailAndPassword,

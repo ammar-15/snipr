@@ -17,7 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { baseUrl } from "@/config/app";
 import { ModeToggle } from "./mode-toggle";
 import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth } from "../../firebase";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
