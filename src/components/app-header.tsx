@@ -124,7 +124,7 @@ export function AppHeader() {
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage
-                      src={baseUrl + "/avatars/user.png"}
+                      src={baseUrl + "avatars/user.png"}
                       alt="logo"
                     />
                     <AvatarFallback className="rounded-lg">SC</AvatarFallback>

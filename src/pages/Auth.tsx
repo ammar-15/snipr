@@ -96,6 +96,9 @@ export default function Auth() {
       <h1 className="text-8xl md:text-8xl font-extrabold tracking-tight">
         Snipr
       </h1>
+      <p className="mt-3 text-sm text-muted-foreground">
+        Every tweet is a claim. <br/>Snipr is the reckoning.
+      </p>
       <Input
         className="w-58"
         type="email"

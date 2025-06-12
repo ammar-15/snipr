@@ -19,6 +19,7 @@ import {
 import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import {toast} from "sonner";
 
 type Creator = {
   username: string;
@@ -79,7 +80,7 @@ export default function Dashboard() {
   const handleGoClick = async () => {
     const username = extractUsername(searchUrl);
     if (!username) {
-      alert("Invalid Twitter URL");
+      toast.error("Invalid Twitter URL");
       return;
     }
 
@@ -90,7 +91,7 @@ export default function Dashboard() {
       const user = auth.currentUser;
 
       if (!user) {
-        alert("You must be logged in.");
+        toast.success("You must be logged in.");
         return;
       }
 
@@ -110,7 +111,7 @@ export default function Dashboard() {
       await fetchTrendingData();
       await fetchPersonalResult();
     } catch (err) {
-      alert("Something went wrong.");
+      toast.error("Something went wrong.");
       console.error(err);
     } finally {
       setLoading(false);
