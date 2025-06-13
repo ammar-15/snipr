@@ -107,10 +107,21 @@ export default function Dashboard() {
       });
 
       const result = await res.json();
+
       if (!result.success) throw new Error("Analysis failed");
 
-      await fetchTrendingData();
-      await fetchPersonalResult();
+      if (result.message === "No ticker calls found.") {
+        setPersonalResult({
+          username: result.username,
+          tickers: "—",
+          score: 0,
+          breakdown: {},
+        });
+        toast("No valid ticker calls were found.");
+      } else {
+        await fetchTrendingData();
+        await fetchPersonalResult();
+      }
     } catch (err) {
       toast.error("Something went wrong.");
       console.error(err);

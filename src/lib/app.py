@@ -191,7 +191,15 @@ def analyze():
 
     if not ticker_calls:
         print("⚠️ No valid ticker calls found in tweets.")
-        return jsonify(success=True, reliability=0, tweetCount=len(tweets), message="No ticker calls found.")
+        return jsonify(
+        success=True,
+        reliability=0,
+        tweetCount=len(tweets),
+        username=twitter_username,
+        breakdown={},
+        message="No ticker calls found."
+    )
+
 
     # 🛡️ Initialize Firebase
     if not firebase_admin._apps:
