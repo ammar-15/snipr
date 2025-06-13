@@ -59,26 +59,32 @@ export default function Dashboard() {
     setCreators(data);
   };
 
-  const fetchPersonalResult = async () => {
-    const username = localStorage.getItem("username")?.replace(/^@/, "");
-    if (!username) return;
+  const fetchPersonalResult = async (targetUsername: string) => {
+    const appUsername = localStorage.getItem("username")?.replace(/^@/, "");
+    if (!appUsername) return;
 
-    const snapshot = await getDocs(collection(db, `${username}snipe`));
+    const snapshot = await getDocs(collection(db, `${appUsername}snipe`));
     const docs = snapshot.docs.map((doc) => doc.data());
 
-    if (docs.length) {
-      const d = docs[0];
+    const match = docs.find(
+      (doc) => doc.username?.toLowerCase() === targetUsername.toLowerCase()
+    );
+
+    if (match) {
       setPersonalResult({
-        username: d.username,
-        tickers: d.tickers,
-        score: d.reliabilityScore,
-        breakdown: d.breakdown,
+        username: match.username,
+        tickers: match.tickers,
+        score: match.reliabilityScore,
+        breakdown: match.breakdown,
       });
+    } else {
+      console.warn("⚠️ No match found for", targetUsername);
     }
   };
 
   const handleGoClick = async () => {
     const username = extractUsername(searchUrl);
+    const cleanTwitterUsername = username.replace(/^@/, "");
     if (!username) {
       toast.error("Invalid Twitter URL");
       return;
@@ -107,7 +113,6 @@ export default function Dashboard() {
       });
 
       const result = await res.json();
-
       if (!result.success) throw new Error("Analysis failed");
 
       if (result.message === "No ticker calls found.") {
@@ -119,8 +124,8 @@ export default function Dashboard() {
         });
         toast("No valid ticker calls were found.");
       } else {
+        await fetchPersonalResult(cleanTwitterUsername); // 👈 pass actual username here
         await fetchTrendingData();
-        await fetchPersonalResult();
       }
     } catch (err) {
       toast.error("Something went wrong.");
