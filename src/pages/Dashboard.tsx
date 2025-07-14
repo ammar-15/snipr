@@ -141,7 +141,8 @@ export default function Dashboard() {
 
   const loadingMessages = [
     "Analyzing tweets harder than SEC analyzes filings...",
-    "I heard Elon and Trump became besties again...",
+    "I heard Elon and Trump broke up again...",
+    "Asked the Feds for transparency... got silence and a red candle.",
     "Cross-referencing with future me to make sure this is legit...",
     "Counting bullish emojis 📈...",
     "Looking for that one perfect ticker...",
