@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
 import {
   Table,
@@ -25,18 +26,15 @@ export default function YourSnipes() {
   const [username, setUsername] = useState("");
 
   useEffect(() => {
-  const fetchUsername = async () => {
-    const user = auth.currentUser;
-    if (!user) return;
-     const snapshot = await getDocs(collection(db, "users")); 
-
-    if (!snapshot.empty) {
-      const docData = snapshot.docs[0].data();
-      setUsername(docData.username);
+  const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const storedUsername = auth.currentUser?.displayName || localStorage.getItem("username") || "username not found";
+      if (storedUsername) {
+        setUsername(storedUsername);
+      }
     }
-  };
-
-  fetchUsername();
+  });
+  return () => unsubscribe();
 }, []);
 
   useEffect(() => {
