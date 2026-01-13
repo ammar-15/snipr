@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import openai
+from openai import OpenAI
 import yfinance as yf
 from dotenv import load_dotenv
 from selenium import webdriver
@@ -39,98 +39,105 @@ def ratelimit_handler(e):
     return jsonify(success=False, error="Too many requests, slow down."), 429
 
 # Scrape tweets using logged-in Selenium session
-def get_tweets(twitter_username, limit=100):
-    from selenium.webdriver.common.keys import Keys
-
+def get_tweets(twitter_username: str, limit: int = 100):
     options = Options()
+    # keep your persistent profile (optional, helps sometimes, but not required)
     options.add_argument("--user-data-dir=/Users/akuul15/.snipr_chrome")
     options.add_argument("--profile-directory=Default")
+
+    # stability flags
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1400,900")
 
     driver = webdriver.Chrome(options=options)
     print("✅ Chrome window launched")
 
-    driver.get("https://x.com/login")
-    time.sleep(3)
-
-    email = os.getenv("STATS_EMAIL")
-    password = os.getenv("STATS_PASSWORD")
-
     try:
-        email_input = driver.find_element(By.NAME, "text")
-        email_input.send_keys(email or '')
-        email_input.send_keys(Keys.RETURN)
+        # go straight to profile (no login)
+        url = f"https://x.com/{twitter_username}"
+        driver.get(url)
         time.sleep(4)
+        print(f"➡️ Navigating to: {url}")
 
-        password_input = driver.find_element(By.NAME, "password")
-        password_input.send_keys(password or '')
-        password_input.send_keys(Keys.RETURN)
-        time.sleep(5)
+        # If X shows a login wall, you’ll often still get some tweets.
+        # We scrape what we can. If we get almost nothing, we’ll return [].
+        tweets = []
+        seen = set()
 
-        print("🔓 Logged in automatically")
-    except Exception as e:
-        print("❌ Login failed:", e)
+        scroll_attempts = 40
+        stuck_rounds = 0
+        max_stuck_rounds = 4
+        for attempt in range(scroll_attempts):
+            # Grab tweet text blocks
+            elements = driver.find_elements(By.XPATH, '//article//div[@lang]')
+            new_count = 0
+            for el in elements:
+                try:
+                    txt = (el.text or "").strip()
+                    if txt and txt not in seen:
+                        seen.add(txt)
+                        tweets.append(txt)
+                        new_count += 1
+                        if len(tweets) >= limit:
+                            break
+                except Exception:
+                    continue
+            print(f"🔄 Scroll attempt {attempt + 1} | +{new_count} new | total={len(tweets)}")
+            if len(tweets) >= limit:
+                break
+
+            # scroll
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(5.0)
+
+            new_height = driver.execute_script("return document.body.scrollHeight")
+            # if we didn't find new tweets this round, count as "stuck"
+            if new_count == 0:
+                stuck_rounds += 1
+                if stuck_rounds >= max_stuck_rounds:
+                    print("⚠️ No new tweets after multiple scrolls, stopping.")
+                    break
+            else:
+                stuck_rounds = 0
+
+        print(f"✅ Fetched {len(tweets)} tweets (public scrape)")
+        # If X blocked everything, you’ll get ~0-2 tiny strings. Treat that as blocked.
+        if len(tweets) < 3:
+            print("⚠️ Likely blocked by X login wall / rate limits.")
+            return []
+        return tweets[:limit]
+
+    finally:
         driver.quit()
-        return []
 
-    driver.get(f"https://x.com/{twitter_username}")
-    time.sleep(5)
-    print(f"➡️ Navigating to: https://x.com/{twitter_username}")
-
-    tweets = set()
-    scroll_attempts = 40
-    current_attempt = 0
-    last_height = driver.execute_script("return document.body.scrollHeight")
-
-    while len(tweets) < limit and current_attempt < scroll_attempts:
-        print(f"🔄 Scroll attempt {current_attempt + 1}")
-
-        elements = driver.find_elements(By.XPATH, '//article//div[@lang]')
-        for i in range(len(elements)):
-            try:
-                tweets.add(elements[i].text)
-            except Exception:
-                continue
-
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(3.5)
-
-        new_height = driver.execute_script("return document.body.scrollHeight")
-        if new_height == last_height:
-            print("⚠️ No new tweets loaded, stopping scroll")
-            break
-        last_height = new_height
-        current_attempt += 1
-
-    driver.quit()
-    print(f"✅ Fetched {len(tweets)} tweets")
-    return list(tweets)[:limit]
 
 # Use OpenAI to analyze tweet sentiments
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def analyze_tweets(tweets):
     prompt = f"""
-    Analyze the following 3 weeks oftweets for stock-related calls. 
-    For each ticker mentioned, label it as 'bullish' or 'bearish', whatever the user mentioned.
-    Format the response as one per line like this: 
-    AAPL: bullish
-    TSLA: bearish
+Analyze the following tweets for stock-related calls.
+For each ticker mentioned, label it as 'bullish' or 'bearish' based on what the user said.
+Format exactly one per line like:
+AAPL: bullish
+TSLA: bearish
 
-    Tweets:
-    {tweets}
-    """
-    print(prompt)
-    response = openai.ChatCompletion.create(
-    model="gpt-4",
-    messages=[
-        {"role": "system", "content": "You are a financial analysis assistant."},
-        {"role": "user", "content": prompt}
-    ],
-    temperature=0.3,
-    max_tokens=500
-)
-    return response.choices[0].message.content.strip() # type: ignore
+Tweets:
+{tweets}
+""".strip()
+
+    resp = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a financial analysis assistant."},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.3,
+        max_tokens=500,
+    )
+    return (resp.choices[0].message.content or "").strip()
+
 
 # Compare predictions with stock performance
 def fact_check(ticker_calls):
