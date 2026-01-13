@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from openai import OpenAI
+import openai
 import yfinance as yf
 from dotenv import load_dotenv
 from selenium import webdriver
@@ -17,7 +17,19 @@ load_dotenv()
 
 app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app, default_limits=["300 per day", "10 per minute"])
-CORS(app, origins=["https://tweetsniper.vercel.app"], supports_credentials=True)
+ALLOWED_ORIGINS = [
+    "https://tweetsniper.vercel.app",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
+]
+
+CORS(
+    app,
+    resources={r"/*": {"origins": ALLOWED_ORIGINS}},
+    supports_credentials=True,
+    allow_headers=["Content-Type", "Authorization"],
+    methods=["POST", "OPTIONS"],
+)
 
 if not firebase_admin._apps:
     cred = credentials.Certificate("serviceAccountKey.json")
@@ -31,8 +43,8 @@ def get_tweets(twitter_username, limit=100):
     from selenium.webdriver.common.keys import Keys
 
     options = Options()
-    options.add_argument("--disable-gpu")
-    options.add_argument("--window-size=1920x1080")
+    options.add_argument("--user-data-dir=/Users/akuul15/.snipr_chrome")
+    options.add_argument("--profile-directory=Default")
 
     driver = webdriver.Chrome(options=options)
     print("✅ Chrome window launched")
@@ -45,12 +57,12 @@ def get_tweets(twitter_username, limit=100):
 
     try:
         email_input = driver.find_element(By.NAME, "text")
-        email_input.send_keys(email)
+        email_input.send_keys(email or '')
         email_input.send_keys(Keys.RETURN)
-        time.sleep(2)
+        time.sleep(4)
 
         password_input = driver.find_element(By.NAME, "password")
-        password_input.send_keys(password)
+        password_input.send_keys(password or '')
         password_input.send_keys(Keys.RETURN)
         time.sleep(5)
 
@@ -95,7 +107,7 @@ def get_tweets(twitter_username, limit=100):
 
 # Use OpenAI to analyze tweet sentiments
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def analyze_tweets(tweets):
     prompt = f"""
@@ -109,7 +121,7 @@ def analyze_tweets(tweets):
     {tweets}
     """
     print(prompt)
-    response = client.chat.completions.create(
+    response = openai.ChatCompletion.create(
     model="gpt-4",
     messages=[
         {"role": "system", "content": "You are a financial analysis assistant."},
@@ -118,7 +130,7 @@ def analyze_tweets(tweets):
     temperature=0.3,
     max_tokens=500
 )
-    return response.choices[0].message.content.strip()
+    return response.choices[0].message.content.strip() # type: ignore
 
 # Compare predictions with stock performance
 def fact_check(ticker_calls):
@@ -137,17 +149,11 @@ def fact_check(ticker_calls):
             correct += 1
     return correct, len(ticker_calls), breakdown
 
-from flask_cors import cross_origin
 @app.route("/analyze", methods=["POST", "OPTIONS"])
 @limiter.limit("10 per minute") 
-@cross_origin()
 def analyze():
     if request.method == "OPTIONS":
-        response = app.make_default_options_response()
-        response.headers["Access-Control-Allow-Origin"] = "https://tweetsniper.vercel.app"
-        response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type"
-        response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
-        return response
+        return ("", 204)
     # 🔒 Authenticate user using Firebase ID token
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
@@ -155,7 +161,7 @@ def analyze():
 
     id_token = auth_header.split("Bearer ")[1]
     try:
-        decoded_token = firebase_auth.verify_id_token(id_token)
+        decoded_token: dict = firebase_auth.verify_id_token(id_token)
         user_uid = decoded_token.get("uid", "")
         user_email = decoded_token.get("email", "")
         print("✅ Authenticated Firebase user:", user_email)
@@ -164,15 +170,28 @@ def analyze():
         return jsonify(error="Invalid token"), 401
 
     # 📩 Get Twitter URL from request body
+    if not request.is_json or request.json is None:
+        return jsonify(error="Invalid or missing JSON in request"), 400
     twitter_url = request.json.get("twitterUrl")
     if not twitter_url:
         return jsonify(error="Missing 'twitterUrl' in request"), 400
-
     twitter_username = twitter_url.rstrip("/").split("/")[-1]
 
     # 🐦 Get tweets & analyze
-    tweets = get_tweets(twitter_username, limit=30)
-    analysis = analyze_tweets(tweets)
+    try:
+        tweets = get_tweets(twitter_username, limit=30)
+        print(f"✅ got {len(tweets)} tweets")
+    except Exception as e:
+        print("❌ get_tweets crashed:", repr(e))
+        return jsonify(success=False, error="Tweet scraping failed", details=str(e)), 500
+
+    try:
+        analysis = analyze_tweets(tweets)
+        print("✅ OpenAI response received")
+    except Exception as e:
+        print("❌ analyze_tweets crashed:", repr(e))
+        return jsonify(success=False, error="AI analysis failed", details=str(e)), 500
+
 
     ticker_calls = {}
     print("📊 OpenAI Analysis Response:\n", analysis)
@@ -214,10 +233,11 @@ def analyze():
             print("❌ No user document found for UID:", user_uid)
             return jsonify(error="User not found"), 404
 
-        app_username = user_doc.to_dict().get("username")
-        if not app_username:
+        user_data = user_doc.to_dict()
+        if not user_data or "username" not in user_data:
             print("❌ No 'username' field found in user document")
             return jsonify(error="Username not found"), 400
+        app_username = user_data.get("username")
 
         print("✅ Found app username:", app_username)
     except Exception as e:
