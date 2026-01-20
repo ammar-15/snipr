@@ -1,0 +1,116 @@
+{
+  "conversationId": "28c68a52-bcf9-4c29-bb06-073c1d938d3b",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi",
+      "ts": "2026-01-20T14:55:40.703877"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! How can I assist you today?",
+      "ts": "2026-01-20T14:55:42.156533"
+    },
+    {
+      "role": "user",
+      "content": "how does this app work",
+      "ts": "2026-01-20T14:55:47.067795"
+    },
+    {
+      "role": "assistant",
+      "content": "To use the app, just enter a Twitter profile link of a user and hit the 'Go' button. The app will analyze recent tweets to find stock calls and check their accuracy. Let me know if you have any other questions!",
+      "ts": "2026-01-20T14:55:49.445416"
+    },
+    {
+      "role": "user",
+      "content": "can i change my username",
+      "ts": "2026-01-20T14:56:17.502469"
+    },
+    {
+      "role": "assistant",
+      "content": "Yes, you can change your username! Click on your profile icon in the top navigation, and you'll find the option to change your username on the user page. If you need more help, just let me know!",
+      "ts": "2026-01-20T14:56:19.247532"
+    },
+    {
+      "role": "user",
+      "content": "how to use the search",
+      "ts": "2026-01-20T14:57:03.775554"
+    },
+    {
+      "role": "assistant",
+      "content": "To use the search feature, look for the search bar on the screen. Type in the Twitter account user link you want to analyze and then hit 'Go'. The app will provide you with the stock analysis for that account. If you have more questions, feel free to ask!",
+      "ts": "2026-01-20T14:57:05.769860"
+    },
+    {
+      "role": "user",
+      "content": "the light mode button is not working",
+      "ts": "2026-01-20T14:57:15.806458"
+    },
+    {
+      "role": "assistant",
+      "content": "If the light mode button isn't working, it might be a temporary glitch. Try refreshing the page or logging out and back in. If the problem persists, please let me know, and I can help further!",
+      "ts": "2026-01-20T14:57:17.893039"
+    },
+    {
+      "role": "user",
+      "content": "ok it works",
+      "ts": "2026-01-20T14:57:23.426901"
+    },
+    {
+      "role": "assistant",
+      "content": "Great to hear that it's working now! If you have any more questions or need assistance with anything else, just let me know!",
+      "ts": "2026-01-20T14:57:24.423138"
+    },
+    {
+      "role": "user",
+      "content": "thanks",
+      "ts": "2026-01-20T14:57:27.514724"
+    },
+    {
+      "role": "assistant",
+      "content": "You're welcome! If you need anything else, feel free to ask. Have a great day!",
+      "ts": "2026-01-20T14:57:28.719599"
+    }
+  ],
+  "summary": "",
+  "routeHistory": [
+    {
+      "route": "/dashboard",
+      "ts": "2026-01-20T14:55:40.703877"
+    },
+    {
+      "route": "/dashboard",
+      "ts": "2026-01-20T14:55:47.067795"
+    },
+    {
+      "route": "/dashboard",
+      "ts": "2026-01-20T14:56:17.502469"
+    },
+    {
+      "route": "/dashboard",
+      "ts": "2026-01-20T14:57:03.775554"
+    },
+    {
+      "route": "/dashboard",
+      "ts": "2026-01-20T14:57:15.806458"
+    },
+    {
+      "route": "/dashboard",
+      "ts": "2026-01-20T14:57:23.426901"
+    },
+    {
+      "route": "/dashboard",
+      "ts": "2026-01-20T14:57:27.514724"
+    }
+  ],
+  "startedAt": "2026-01-20T14:55:40.673620",
+  "lastUpdatedAt": "2026-01-20T14:57:28.719599",
+  "unknownCount": 0,
+  "endedAt": null,
+  "username": "@test123",
+  "lastSnapshotAt": "2026-01-20T14:57:28.719599",
+  "snapshotAt": "2026-01-20T14:57:58.725522",
+  "isSnapshot": true,
+  "lastSavedAt": "2026-01-20T14:57:58.725776",
+  "isFinal": false
+}

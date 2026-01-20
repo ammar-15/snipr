@@ -1,0 +1,32 @@
+[
+  {
+    "conversationId": "5b797f8e-2a08-4422-ba6b-04600f84a77e",
+    "username": "@test123",
+    "startedAt": "2026-01-20T14:41:13.952245",
+    "endedAt": "2026-01-20T14:41:17.545506",
+    "routeHistory": [
+      {
+        "route": "/dashboard",
+        "ts": "2026-01-20T14:41:13.989484"
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "hello",
+        "ts": "2026-01-20T14:41:13.989484"
+      },
+      {
+        "role": "assistant",
+        "content": "Hello! How can I assist you today?",
+        "ts": "2026-01-20T14:41:16.562170"
+      }
+    ],
+    "summary": "",
+    "missing_feature": false,
+    "feature_request": {
+      "title": "",
+      "description": ""
+    }
+  }
+]

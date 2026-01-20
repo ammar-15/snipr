@@ -1,0 +1,29 @@
+{
+  "conversationId": "6c9af150-2b07-4806-823d-c1c197e46461",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi",
+      "ts": "2026-01-20T14:52:29.757641"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! How can I assist you today?",
+      "ts": "2026-01-20T14:52:31.548254"
+    }
+  ],
+  "summary": "",
+  "routeHistory": [
+    {
+      "route": "/dashboard",
+      "ts": "2026-01-20T14:52:29.757641"
+    }
+  ],
+  "startedAt": "2026-01-20T14:52:29.713938",
+  "lastUpdatedAt": "2026-01-20T14:52:31.548254",
+  "unknownCount": 0,
+  "endedAt": "2026-01-20T14:52:35.971466",
+  "username": "@test123",
+  "lastSavedAt": "2026-01-20T14:52:35.971466",
+  "isFinal": true
+}

@@ -1,19 +1,25 @@
+import os, time
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from flask import Flask, request, jsonify
 from openai import OpenAI
 import yfinance as yf
-from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-import os, time
 import numpy as np
 from flask_cors import CORS
 from flask_limiter import Limiter
 import firebase_admin
 from firebase_admin import credentials, firestore, auth as firebase_auth
 from flask_limiter.util import get_remote_address
-
-load_dotenv()
+from uuid import uuid4
+from .support_chat import support_chat
+from .notifier import send_feature_request_email
+from .memory_store import get_or_create_convo, end_convo
+from .transcripts import save_transcript
 
 app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app, default_limits=["300 per day", "10 per minute"])
@@ -274,6 +280,54 @@ def analyze():
         tweetCount=len(tweets),
         breakdown=breakdown
     )
+
+
+@app.route("/api/support/chat", methods=["POST"])
+def support_chat_endpoint():
+    data = request.get_json()
+    username = data.get("username")
+    route = data.get("route")
+    message = data.get("message")
+    conversation_id = data.get("conversationId") or str(uuid4())
+
+    # Retrieve or create conversation
+    convo = get_or_create_convo(conversation_id, username)
+
+    # Call support_chat
+    response = support_chat(username, route, message, conversation_id)
+
+    # Handle missing feature
+    if response.get("missing_feature"):
+        send_feature_request_email(
+            username=username,
+            route=route,
+            user_message=message,
+            title=response["feature_request"].get("title"),
+            description=response["feature_request"].get("description"),
+            timestamp=convo["lastUpdatedAt"],
+            conversation_id=conversation_id
+        )
+
+    return jsonify({
+        "reply": response.get("reply"),
+        "conversationId": conversation_id,
+        "missing_feature": response.get("missing_feature", False)
+    })
+
+@app.route("/api/support/chat/end", methods=["POST"])
+def end_chat_endpoint():
+    data = request.get_json()
+    username = data.get("username")
+    conversation_id = data.get("conversationId")
+
+    # End conversation
+    convo = end_convo(conversation_id)
+
+    if convo:
+        # Save transcript
+        save_transcript(convo)
+
+    return jsonify({"ok": True})
 
 
 if __name__ == "__main__":
